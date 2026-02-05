@@ -1,0 +1,31 @@
+# secrets
+.env
+*.pem
+*.key
+*.p12
+credentials*.json
+*token*
+*secret*
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+.envrc
+
+# notebooks
+.ipynb_checkpoints/
+
+# data (keep sample, ignore raw/private)
+data/raw/
+data/private/
+
+# logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

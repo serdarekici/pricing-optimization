@@ -1,0 +1,4 @@
+price_ladder,min_price_multiplier,max_price_multiplier,max_change_pct
+A,1.05,1.8,0.25
+B,1.1,2.0,0.3
+C,1.2,2.5,0.35
