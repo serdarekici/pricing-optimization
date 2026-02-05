@@ -57,7 +57,7 @@ Per SKU, we fit a log-log model:
 In code: `src/pricing_engine/elasticity.py`
 
 
-### 1b) Seasonality layer (now included)
+### 1) Seasonality layer 
 
 In real-world pricing data, observed demand is often a mixture of **price effect** and **time/season effect**.
 If you estimate elasticity directly on raw demand, you risk attributing seasonal spikes/dips to price.
