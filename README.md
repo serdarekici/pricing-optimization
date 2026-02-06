@@ -8,7 +8,6 @@ This repository provides an end-to-end **pricing optimization pipeline** that:
 - applies **business constraints** (floors/ceilings/price ladders),
 - and generates **price recommendations** with expected uplift.
 
-> ✅ **GitHub-safe by design**: no database credentials, no connection strings, no customer data.  
 > The project runs fully on **sample CSVs** under `data/sample/`.
 
 ---
@@ -26,7 +25,7 @@ Pipeline stages:
 
 ---
 
-## Why this matters (business framing)
+## Why this matters
 
 Cost-plus pricing and static margin rules are easy to implement, but they ignore demand response.
 
@@ -44,7 +43,7 @@ This engine makes pricing decisions **measurable** and **auditable**:
 
 ## Core model (article-style summary)
 
-### 1) Elasticity estimation
+### 1a) Elasticity estimation
 Per SKU, we fit a log-log model:
 
 \[
@@ -57,7 +56,7 @@ Per SKU, we fit a log-log model:
 In code: `src/pricing_engine/elasticity.py`
 
 
-### 1) Seasonality layer 
+### 1b) Seasonality layer 
 
 In real-world pricing data, observed demand is often a mixture of **price effect** and **time/season effect**.
 If you estimate elasticity directly on raw demand, you risk attributing seasonal spikes/dips to price.
@@ -79,12 +78,98 @@ Outputs include:
 - `seasonality_strength` (0–1 proxy)
 - `current_profit_seasonal` / `optimal_profit_seasonal`
 
-### 2) Demand function
-From the model we construct:
+### 2) Demand Function
+
+From the elasticity model we construct the demand function:
 
 \[
 D(P) = a\,P^{b}
 \]
+
+In code: `src/pricing_engine/demand_model.py`
+
+---
+
+#### Selected Functional Form
+
+In this project, the power demand function above was selected as the primary demand representation. This functional form is widely used in pricing analytics because it directly links price elasticity to demand response and provides stable behavior for optimization.
+
+However, it is important to note that demand is **industry-specific and context-dependent**. Different sectors, product categories, and market structures may require alternative functional forms to better capture real customer behavior.
+
+Therefore, the demand function should always be selected based on:
+
+- Industry dynamics  
+- Customer price sensitivity patterns  
+- Data availability and granularity  
+- Product substitutability  
+- Contract vs. spot pricing structure  
+
+---
+
+#### Examples of Alternative Demand Functions
+
+Below are commonly used demand formulations in pricing science:
+
+**1) Exponential demand**
+
+\[
+D(P) = a\,e^{-bP}
+\]
+
+- Frequently used in spare parts and aftermarket pricing  
+- Produces smooth, single-peak profit curves  
+- Enables closed-form optimal pricing  
+
+---
+
+**2) Linear demand**
+
+\[
+D(P) = a - bP
+\]
+
+- Simple and interpretable  
+- Common in introductory pricing models  
+- May become unrealistic at extreme price levels  
+
+---
+
+**3) Logistic demand**
+
+\[
+D(P) = \frac{L}{1 + e^{k(P - P_0)}}
+\]
+
+- Captures saturation effects  
+- Useful in consumer goods and retail pricing  
+
+---
+
+**4) Piecewise / Ladder demand**
+
+\[
+D(P) =
+\begin{cases}
+D_1 & P \leq P_1 \\
+D_2 & P_1 < P \leq P_2
+\end{cases}
+\]
+
+- Reflects contract tiers or price ladders  
+- Common in B2B industrial pricing environments  
+
+---
+
+#### Project Positioning
+
+While multiple demand formulations exist, this repository standardizes on the power demand function \(D(P)=aP^{b}\) to ensure:
+
+- Direct interpretability via elasticity  
+- Computational efficiency  
+- Stable optimization behavior  
+- Portfolio reproducibility  
+
+The engine architecture remains modular, allowing alternative demand functions to be integrated when required by specific industries or datasets.
 
 In code: `src/pricing_engine/demand_model.py`
 
