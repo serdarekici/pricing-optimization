@@ -1,5 +1,5 @@
 # Pricing Optimization Engine
-**Elasticity-Driven Profit Maximization & Price Recommendation (Portfolio Demo)**
+**Elasticity-Driven Profit Maximization & Price Recommendation**
 
 This repository provides an end-to-end **pricing optimization pipeline** that:
 - estimates **price elasticity** from historical sales,
